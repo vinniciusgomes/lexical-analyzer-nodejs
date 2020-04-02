@@ -23,19 +23,24 @@ for (caractere of txtEntrada) {
   } else {
     if (!isEspaco(caractere)) {
       if (!isOperador(caractere)) {
-        if (!isNumero(caractere)) {
+        if (!isNumero(caractere)) { // ALterar esse if
           if (rastro != "letra") {
             tokenAtual = checarToken(tokenAtual);
           }
           tokenAtual += caractere;
           rastro = "letra";
-        } else if (Number.isInteger(parseInt(tokenAtual[0]))) {
+        } else if (Number.isInteger(parseInt(caractere))) {
           tokenAtual += caractere;
-          if (tokenAtual >= 0 && tokenAtual <= 32767) {
-            rastro = "numero";
-          } else {
-            console.log("Erro: Número inválido!");
-            process.exit(1);
+          if(Number.isInteger(parseInt(tokenAtual))){
+            if (tokenAtual >= 0 && tokenAtual <= 32767) {
+              rastro = "numero";
+            } else {
+              console.log("Erro: Número inválido!");
+              process.exit(1);
+            }
+          }else{
+            // tokenAtual += caractere;
+            rastro = "letra";
           }
         }
       } else if (operadores.includes(tokenAtual[0])) {
@@ -80,7 +85,7 @@ function checarToken(tokenAtual) {
       case "operador":
         operadoresEncontrados.push(tokenAtual);
         break;
-      case "constante":
+      case "numero":
         numerosEncontrados.push(tokenAtual);
         break;
     }

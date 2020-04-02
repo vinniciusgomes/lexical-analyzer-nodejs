@@ -54,7 +54,7 @@ for (caractere of txtEntrada) {
   contColuna++;
 }
 
-var saidaArquivo = "token;tipoToken;posicao(linha);posicao(coluna);\n";
+var saidaArquivo = "token; tipoToken; posicao (linha); posicao(coluna);\n\n";
 var auxTokenRepetido = [];
 
 concatRetornoArquivo(prEncontrados, "Palavra Reservada");
@@ -62,7 +62,7 @@ concatRetornoArquivo(identificadoresEncontrados, "Identificador");
 concatRetornoArquivo(operadoresEncontrados, "Operador");
 concatRetornoArquivo(numerosEncontrados, "Numero");
 
-fs.writeFile("./src/output/result.csv", saidaArquivo, function(err) {});
+fs.writeFile("./src/output/result.pdf", saidaArquivo, function(err) {});
 
 // Verifica tipo do token
 function checarToken(tokenAtual) {

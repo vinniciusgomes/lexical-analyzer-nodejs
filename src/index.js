@@ -21,11 +21,11 @@ for (caractere of txtEntrada) {
     contLinha++;
     contColuna = 0;
   } else {
-    if (!eh_espaco(caractere)) {
-      if (!eh_operador(caractere)) {
-        if (!eh_numero(caractere)) {
+    if (!isEspaco(caractere)) {
+      if (!isOperador(caractere)) {
+        if (!isNumero(caractere)) {
           if (rastro != "letra") {
-            tokenAtual = checar_token(tokenAtual);
+            tokenAtual = checarToken(tokenAtual);
           }
           tokenAtual += caractere;
           rastro = "letra";
@@ -42,12 +42,12 @@ for (caractere of txtEntrada) {
         tokenAtual += caractere;
         rastro = "operador";
       } else {
-        tokenAtual = checar_token(tokenAtual);
+        tokenAtual = checarToken(tokenAtual);
         tokenAtual += caractere;
         rastro = "operador";
       }
     } else {
-      tokenAtual = checar_token(tokenAtual);
+      tokenAtual = checarToken(tokenAtual);
       rastro = "nada";
     }
   }
@@ -61,9 +61,11 @@ concatRetornoArquivo(prEncontrados, "Palavra Reservada");
 concatRetornoArquivo(identificadoresEncontrados, "Identificador");
 concatRetornoArquivo(operadoresEncontrados, "Operador");
 concatRetornoArquivo(numerosEncontrados, "Numero");
+
 fs.writeFile("./src/output/result.csv", saidaArquivo, function(err) {});
 
-function checar_token(tokenAtual) {
+// Verifica tipo do token
+function checarToken(tokenAtual) {
   if (tokenAtual != "") {
     switch (rastro) {
       case "nada":
@@ -86,15 +88,15 @@ function checar_token(tokenAtual) {
   return "";
 }
 
-function eh_espaco(caractere) {
+function isEspaco(caractere) {
   return caractere === " ";
 }
 
-function eh_operador(caractere) {
+function isOperador(caractere) {
   return operadores.includes(caractere);
 }
 
-function eh_numero(caractere) {
+function isNumero(caractere) {
   var n = parseInt(caractere);
   return Number.isInteger(n);
 }
@@ -130,6 +132,8 @@ function concatRetornoArquivo(items, tipoToken) {
   }
   auxTokenRepetido = [];
 }
+
+// Pegando posição do caractere
 function getLinhaEColunaToken(token, ultimaCol = false, ultimaLinha = false) {
   for (const linha of linhasTxtEntrada) {
     var colToken = linha.indexOf(token);

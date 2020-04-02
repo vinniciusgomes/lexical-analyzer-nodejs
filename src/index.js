@@ -1,89 +1,85 @@
-const palavras_reservadas = ["begin", "end"];
+const palavraseservadas = ["begin", "end"];
 const operadores = ["+", "="];
 
 var fs = require("file-system");
-var txt_entrada = fs.readFileSync("./input/commands.js", "utf8");
+var txtEntrada = fs.readFileSync("./src/input/commands.js", "utf8");
 
-linhas_txt_entrada = txt_entrada.split("\n");
+linhasTxtEntrada = txtEntrada.split("\n");
 
-var token_atual = "";
-var pr_encontrados = [];
-var identificadores_encontrados = [];
-var operadores_encontrados = [];
-var numeros_encontrados = [];
+var tokenAtual = "";
+var prEncontrados = [];
+var identificadoresEncontrados = [];
+var operadoresEncontrados = [];
+var numerosEncontrados = [];
 var rastro = "nada";
-var cont_linha = 0;
-var cont_coluna = 0;
+var contLinha = 0;
+var contColuna = 0;
 
-for (caractere of txt_entrada) {
+// Percorre todos os caracteres do input
+for (caractere of txtEntrada) {
   if (caractere == "\n") {
-    cont_linha++;
-    cont_coluna = 0;
+    contLinha++;
+    contColuna = 0;
   } else {
     if (!eh_espaco(caractere)) {
       if (!eh_operador(caractere)) {
         if (!eh_numero(caractere)) {
           if (rastro != "letra") {
-            token_atual = checar_token(token_atual);
+            tokenAtual = checar_token(tokenAtual);
           }
-          token_atual += caractere;
+          tokenAtual += caractere;
           rastro = "letra";
-        } else if (Number.isInteger(parseInt(token_atual[0]))) {
-          token_atual += caractere;
-          if (token_atual >= 0 && token_atual <= 32767) {
+        } else if (Number.isInteger(parseInt(tokenAtual[0]))) {
+          tokenAtual += caractere;
+          if (tokenAtual >= 0 && tokenAtual <= 32767) {
             rastro = "numero";
           } else {
             console.log("Erro: Número inválido!");
             process.exit(1);
           }
-        } else {
-          token_atual = checar_token(token_atual);
-          token_atual += caractere;
-          rastro = "constante";
         }
-      } else if (operadores.includes(token_atual[0])) {
-        token_atual += caractere;
+      } else if (operadores.includes(tokenAtual[0])) {
+        tokenAtual += caractere;
         rastro = "operador";
       } else {
-        token_atual = checar_token(token_atual);
-        token_atual += caractere;
+        tokenAtual = checar_token(tokenAtual);
+        tokenAtual += caractere;
         rastro = "operador";
       }
     } else {
-      token_atual = checar_token(token_atual);
+      tokenAtual = checar_token(tokenAtual);
       rastro = "nada";
     }
   }
-  cont_coluna++;
+  contColuna++;
 }
 
-var saida_arquivo = "token;tipo_token;posicao(linha);posicao(coluna);\n";
-var aux_token_repetido = [];
+var saidaArquivo = "token;tipoToken;posicao(linha);posicao(coluna);\n";
+var auxTokenRepetido = [];
 
-concat_retorno_arquivo(pr_encontrados, "Palavra Reservada");
-concat_retorno_arquivo(identificadores_encontrados, "Identificador");
-concat_retorno_arquivo(operadores_encontrados, "Operador");
-concat_retorno_arquivo(numeros_encontrados, "Numero");
+concatRetornoArquivo(prEncontrados, "Palavra Reservada");
+concatRetornoArquivo(identificadoresEncontrados, "Identificador");
+concatRetornoArquivo(operadoresEncontrados, "Operador");
+concatRetornoArquivo(numerosEncontrados, "Numero");
+fs.writeFile("./src/output/result.csv", saidaArquivo, function(err) {});
 
-fs.writeFile("./output/result.csv", saida_arquivo, function(err) {});
-
-function checar_token(token_atual) {
-  if (token_atual != "") {
+function checar_token(tokenAtual) {
+  if (tokenAtual != "") {
     switch (rastro) {
       case "nada":
         break;
       case "letra":
-        if (palavras_reservadas.includes(token_atual)) {
-          pr_encontrados.push(token_atual);
-        } else if (token_atual != "\n") {
-          identificadores_encontrados.push(token_atual);
+        if (palavraseservadas.includes(tokenAtual)) {
+          prEncontrados.push(tokenAtual);
+        } else if (tokenAtual != "\n") {
+          identificadoresEncontrados.push(tokenAtual);
         }
         break;
       case "operador":
-        operadores_encontrados.push(token_atual);
+        operadoresEncontrados.push(tokenAtual);
         break;
       case "constante":
-        numeros_encontrados.push(token_atual);
+        numerosEncontrados.push(tokenAtual);
         break;
     }
   }
@@ -103,55 +99,52 @@ function eh_numero(caractere) {
   return Number.isInteger(n);
 }
 
-function concat_retorno_arquivo(items, tipo_token) {
+// Gera adiciona valores no arquivo
+function concatRetornoArquivo(items, tipoToken) {
   for (id of items) {
-    if (aux_token_repetido[id]) {
-      ultima_col = aux_token_repetido[id].ultima_col + 1;
-      ultima_linha = aux_token_repetido[id].ultima_linha;
+    if (auxTokenRepetido[id]) {
+      ultimaCol = auxTokenRepetido[id].ultimaCol + 1;
+      ultimaLinha = auxTokenRepetido[id].ultimaLinha;
 
-      linha_e_coluna = get_linha_e_coluna_token(id, ultima_col, ultima_linha);
+      linhaEColuna = getLinhaEColunaToken(id, ultimaCol, ultimaLinha);
 
-      saida_arquivo += `${id}; ${tipo_token}; ${linha_e_coluna.linha};${linha_e_coluna.coluna}\n`;
+      saidaArquivo += `${id}; ${tipoToken}; ${linhaEColuna.linha};${linhaEColuna.coluna}\n`;
 
-      aux_token_repetido[id] = {
+      auxTokenRepetido[id] = {
         token: id,
-        qtd: aux_token_repetido[id].qtd + 1,
-        ultima_col: linha_e_coluna.coluna,
-        ultima_linha: linha_e_coluna.linha
+        qtd: auxTokenRepetido[id].qtd + 1,
+        ultimaCol: linhaEColuna.coluna,
+        ultimaLinha: linhaEColuna.linha
       };
     } else {
-      linha_e_coluna = get_linha_e_coluna_token(id);
-      saida_arquivo += `${id}; ${tipo_token}; ${linha_e_coluna.linha};${linha_e_coluna.coluna}\n`;
+      linhaEColuna = getLinhaEColunaToken(id);
+      saidaArquivo += `${id}; ${tipoToken}; ${linhaEColuna.linha};${linhaEColuna.coluna}\n`;
 
-      aux_token_repetido[id] = {
+      auxTokenRepetido[id] = {
         token: id,
         qtd: 1,
-        ultima_col: linha_e_coluna.coluna,
-        ultima_linha: linha_e_coluna.linha
+        ultimaCol: linhaEColuna.coluna,
+        ultimaLinha: linhaEColuna.linha
       };
     }
   }
-  aux_token_repetido = [];
+  auxTokenRepetido = [];
 }
-function get_linha_e_coluna_token(
-  token,
-  ultima_col = false,
-  ultima_linha = false
-) {
-  for (const linha of linhas_txt_entrada) {
-    var col_token = linha.indexOf(token);
-    if (col_token >= 0) {
-      var linha_token = linhas_txt_entrada.indexOf(linha);
-      if (!(ultima_col && ultima_linha)) {
-        return { linha: linha_token, coluna: col_token };
+function getLinhaEColunaToken(token, ultimaCol = false, ultimaLinha = false) {
+  for (const linha of linhasTxtEntrada) {
+    var colToken = linha.indexOf(token);
+    if (colToken >= 0) {
+      var linhaToken = linhasTxtEntrada.indexOf(linha);
+      if (!(ultimaCol && ultimaLinha)) {
+        return { linha: linhaToken, coluna: colToken };
       } else {
-        if (linha_token == ultima_linha && col_token > ultima_col) {
-          return { linha: linha_token, coluna: col_token };
+        if (linhaToken == ultimaLinha && colToken > ultimaCol) {
+          return { linha: linhaToken, coluna: colToken };
         } else if (
-          (linha_token != ultima_linha || col_token != ultima_col) &&
-          (linha_token > ultima_linha || col_token > ultima_col)
+          (linhaToken != ultimaLinha || colToken != ultimaCol) &&
+          (linhaToken > ultimaLinha || colToken > ultimaCol)
         ) {
-          return { linha: linha_token, coluna: col_token };
+          return { linha: linhaToken, coluna: colToken };
         }
       }
     }

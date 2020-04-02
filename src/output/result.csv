@@ -1,0 +1,10 @@
+token;tipoToken;posicao(linha);posicao(coluna);
+begin; Palavra Reservada; 0;0
+end; Palavra Reservada; 3;0
+i; Identificador; 0;3
+i; Identificador; 0;3
+i; Identificador; 0;3
+=; Operador; 1;4
++; Operador; 1;8
+=; Operador; 2;4
++; Operador; 2;8

@@ -1,4 +1,5 @@
-token;tipoToken;posicao(linha);posicao(coluna);
+token; tipoToken; posicao (linha); posicao(coluna);
+
 begin; Palavra Reservada; 0;0
 begin1aaa; Identificador; undefined;undefined
 begin1aaaend; Identificador; undefined;undefined

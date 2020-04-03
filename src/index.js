@@ -2,9 +2,11 @@ const palavraseservadas = ["begin", "end"];
 const operadores = ["+", "="];
 
 var fs = require("file-system");
-var txtEntrada = fs.readFileSync("./src/input/commands.js", "utf8");
+var txtEntrada = fs.readFileSync("./src/input/commands.txt", "utf8");
 
-linhasTxtEntrada = txtEntrada.split("\n");
+linhasTxtEntrada = txtEntrada.split('\n');
+
+txtEntrada = txtEntrada.replace(/[\n]/g, " ") + " ";
 
 var tokenAtual = "";
 var prEncontrados = [];
@@ -23,9 +25,10 @@ for (caractere of txtEntrada) {
   } else {
     if (!isEspaco(caractere)) {
       if (!isOperador(caractere)) {
-        if (!isNumero(caractere)) { // ALterar esse if
-          if (rastro != "letra") {
-            tokenAtual = checarToken(tokenAtual);
+        if (!isNumero(caractere)) {
+          if (Number.isInteger(parseInt(tokenAtual[0]))) {
+            console.log("Erro: Identificador inválido!");
+            process.exit(1);
           }
           tokenAtual += caractere;
           rastro = "letra";
@@ -59,7 +62,7 @@ for (caractere of txtEntrada) {
   contColuna++;
 }
 
-var saidaArquivo = "token; tipoToken; posicao (linha); posicao(coluna);\n\n";
+var saidaArquivo = "token; tipoToken; posicao (linha); posicao(coluna)\n";
 var auxTokenRepetido = [];
 
 concatRetornoArquivo(prEncontrados, "Palavra Reservada");
@@ -94,7 +97,7 @@ function checarToken(tokenAtual) {
 }
 
 function isEspaco(caractere) {
-  return caractere === " ";
+  return caractere === " " || caractere === "\n";
 }
 
 function isOperador(caractere) {

@@ -62,7 +62,7 @@ for (caractere of txtEntrada) {
   contColuna++;
 }
 
-var saidaArquivo = "token; tipoToken; posicao (linha); posicao(coluna)\n";
+var saidaArquivo = "token; tipoToken; posicao (linha); posicao(coluna)\n\n";
 var auxTokenRepetido = [];
 
 concatRetornoArquivo(prEncontrados, "Palavra Reservada");

@@ -1,8 +1,9 @@
 token; tipoToken; posicao (linha); posicao(coluna)
+
 begin; Palavra Reservada; 0;0
 end; Palavra Reservada; 2;0
-_aa; Identificador; 1;2
-=; Operador; 1;6
-+; Operador; 1;10
-1; Numero; 1;8
-234; Numero; 1;12
+=; Operador; 1;4
++; Operador; 1;8
+1; Numero; 1;2
+1; Numero; undefined;undefined
+234; Numero; 1;10

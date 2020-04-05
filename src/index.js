@@ -1,5 +1,7 @@
-const palavraseservadas = ["begin", "end"];
+const palavrasReservadas = ["begin", "end"];
 const operadores = ["+", "="];
+const alfabeto = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+const especiais = ["_"];
 
 var fs = require("file-system");
 var txtEntrada = fs.readFileSync("./src/input/commands.txt", "utf8");
@@ -16,6 +18,7 @@ var numerosEncontrados = [];
 var rastro = "nada";
 var contLinha = 0;
 var contColuna = 0;
+var ultimo = "";
 
 // Percorre todos os caracteres do input
 for (caractere of txtEntrada) {
@@ -30,8 +33,18 @@ for (caractere of txtEntrada) {
             console.log("Erro: Identificador inválido!");
             process.exit(1);
           }
-          tokenAtual += caractere;
-          rastro = "letra";
+          if(!especiais.includes(tokenAtual[0])){
+            if(alfabeto.includes(caractere) || especiais.includes(caractere)){
+              tokenAtual += caractere;
+              rastro = "letra";
+            }else{
+              console.log("Erro: Caractere inválido!");
+              process.exit(1);
+            }
+          }else{
+            console.log("Erro: Identificador inválido!");
+              process.exit(1);
+          }
         } else if (Number.isInteger(parseInt(caractere))) {
           tokenAtual += caractere;
           if(Number.isInteger(parseInt(tokenAtual))){
@@ -79,17 +92,24 @@ function checarToken(tokenAtual) {
       case "nada":
         break;
       case "letra":
-        if (palavraseservadas.includes(tokenAtual)) {
+        if (palavrasReservadas.includes(tokenAtual)) {
           prEncontrados.push(tokenAtual);
         } else if (tokenAtual != "\n") {
           identificadoresEncontrados.push(tokenAtual);
         }
+        ultimo = "letra";
         break;
       case "operador":
+        if(tokenAtual == "=" && ultimo == "numero"){
+          console.log("Identificador inválido");
+          process.exit(1);
+        }
         operadoresEncontrados.push(tokenAtual);
+        ultimo = "operador";
         break;
       case "numero":
         numerosEncontrados.push(tokenAtual);
+        ultimo = "numero";
         break;
     }
   }
@@ -112,54 +132,11 @@ function isNumero(caractere) {
 // Gera adiciona valores no arquivo
 function concatRetornoArquivo(items, tipoToken) {
   for (id of items) {
-    if (auxTokenRepetido[id]) {
-      ultimaCol = auxTokenRepetido[id].ultimaCol + 1;
-      ultimaLinha = auxTokenRepetido[id].ultimaLinha;
-
-      linhaEColuna = getLinhaEColunaToken(id, ultimaCol, ultimaLinha);
-
-      saidaArquivo += `${id}; ${tipoToken}; ${linhaEColuna.linha};${linhaEColuna.coluna}\n`;
-
+      saidaArquivo += `${id}; ${tipoToken}\n`;
       auxTokenRepetido[id] = {
         token: id,
-        qtd: auxTokenRepetido[id].qtd + 1,
-        ultimaCol: linhaEColuna.coluna,
-        ultimaLinha: linhaEColuna.linha
+        qtd: 1
       };
-    } else {
-      linhaEColuna = getLinhaEColunaToken(id);
-      saidaArquivo += `${id}; ${tipoToken}; ${linhaEColuna.linha};${linhaEColuna.coluna}\n`;
-
-      auxTokenRepetido[id] = {
-        token: id,
-        qtd: 1,
-        ultimaCol: linhaEColuna.coluna,
-        ultimaLinha: linhaEColuna.linha
-      };
-    }
   }
   auxTokenRepetido = [];
-}
-
-// Pegando posição do caractere
-function getLinhaEColunaToken(token, ultimaCol = false, ultimaLinha = false) {
-  for (const linha of linhasTxtEntrada) {
-    var colToken = linha.indexOf(token);
-    if (colToken >= 0) {
-      var linhaToken = linhasTxtEntrada.indexOf(linha);
-      if (!(ultimaCol && ultimaLinha)) {
-        return { linha: linhaToken, coluna: colToken };
-      } else {
-        if (linhaToken == ultimaLinha && colToken > ultimaCol) {
-          return { linha: linhaToken, coluna: colToken };
-        } else if (
-          (linhaToken != ultimaLinha || colToken != ultimaCol) &&
-          (linhaToken > ultimaLinha || colToken > ultimaCol)
-        ) {
-          return { linha: linhaToken, coluna: colToken };
-        }
-      }
-    }
-  }
-  return false;
 }

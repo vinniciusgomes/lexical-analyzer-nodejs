@@ -1,4 +1,5 @@
 token; tipoToken; posicao (linha); posicao(coluna)
+
 begin; Palavra Reservada
 end; Palavra Reservada
 a; Identificador

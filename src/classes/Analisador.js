@@ -11,34 +11,7 @@ module.exports = class Analisador {
   constructor() {
     this.palavrasReservadas = ["begin", "end"];
     this.operadores = ["+", "="];
-    this.alfabeto = [
-      "a",
-      "b",
-      "c",
-      "d",
-      "e",
-      "f",
-      "g",
-      "h",
-      "i",
-      "j",
-      "k",
-      "l",
-      "m",
-      "n",
-      "o",
-      "p",
-      "q",
-      "r",
-      "s",
-      "t",
-      "u",
-      "v",
-      "w",
-      "x",
-      "y",
-      "z",
-    ];
+    this.alfabeto = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
     this.especiais = ["_"];
     this.txtEntrada = fs.readFileSync("./src/input/commands.txt", "utf8");
     this.tokenAtual = "";

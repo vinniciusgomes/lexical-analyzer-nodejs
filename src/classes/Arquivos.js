@@ -1,4 +1,3 @@
-
 module.exports = class Arquivo {
   constructor() {
     this.saidaArquivo = "token; tipoToken; posicao (linha); posicao(coluna)\n";

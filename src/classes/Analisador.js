@@ -6,39 +6,14 @@ var Errors = require("./Errors");
 Errors = new Errors();
 var Arquivo = require("./Arquivos");
 Arquivo = new Arquivo();
+var Sintatico = require("./Sintatico");
+Sintatico = new Sintatico();
 
 module.exports = class Analisador {
   constructor() {
     this.palavrasReservadas = ["begin", "end"];
     this.operadores = ["+", "="];
-    this.alfabeto = [
-      "a",
-      "b",
-      "c",
-      "d",
-      "e",
-      "f",
-      "g",
-      "h",
-      "i",
-      "j",
-      "k",
-      "l",
-      "m",
-      "n",
-      "o",
-      "p",
-      "q",
-      "r",
-      "s",
-      "t",
-      "u",
-      "v",
-      "w",
-      "x",
-      "y",
-      "z",
-    ];
+    this.alfabeto = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
     this.especiais = ["_"];
     this.txtEntrada = fs.readFileSync("./src/input/commands.txt", "utf8");
     this.tokenAtual = "";
@@ -46,6 +21,7 @@ module.exports = class Analisador {
     this.identificadoresEncontrados = [];
     this.operadoresEncontrados = [];
     this.numerosEncontrados = [];
+    this.tokens = [];
     this.rastro = "nada";
     this.ultimo = "";
   }
@@ -108,6 +84,9 @@ module.exports = class Analisador {
     Arquivo.concatRetornoArquivo(this.operadoresEncontrados, "Operador");
     Arquivo.concatRetornoArquivo(this.numerosEncontrados, "Numero");
     Arquivo.WriteFile("./src/output/result.pdf", fs);
+    if(!Sintatico.analisar(this.tokens)){
+      Errors.error("Erro na gramática");
+    }
   }
 
   // Verifica tipo do token
@@ -119,8 +98,16 @@ module.exports = class Analisador {
         case "letra":
           if (this.palavrasReservadas.includes(this.tokenAtual)) {
             this.prEncontrados.push(this.tokenAtual);
+            this.tokens.push({
+              token: this.tokenAtual,
+              type: "Palavra Reservada"
+            })
           } else if (this.tokenAtual != "\n") {
             this.identificadoresEncontrados.push(this.tokenAtual);
+            this.tokens.push({
+              token: this.tokenAtual,
+              type: "Identificador"
+            })
           }
           this.ultimo = "letra";
           break;
@@ -129,10 +116,18 @@ module.exports = class Analisador {
             Errors.error("Identificador inválido");
           }
           this.operadoresEncontrados.push(this.tokenAtual);
+          this.tokens.push({
+            token: this.tokenAtual,
+            type: "Operador"
+          })
           this.ultimo = "operador";
           break;
         case "numero":
           this.numerosEncontrados.push(this.tokenAtual);
+          this.tokens.push({
+            token: this.tokenAtual,
+            type: "Numero"
+          })
           this.ultimo = "numero";
           break;
       }

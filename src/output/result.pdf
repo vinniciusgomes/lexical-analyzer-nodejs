@@ -1,8 +1,0 @@
-token; tipoToken; posicao (linha); posicao(coluna)
-begin; Palavra Reservada
-end; Palavra Reservada
-aaas; Identificador
-a; Identificador
-=; Operador
-+; Operador
-1; Numero

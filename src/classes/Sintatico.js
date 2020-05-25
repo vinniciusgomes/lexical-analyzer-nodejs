@@ -35,7 +35,10 @@ module.exports = class Sintatico {
                 }
                 break;
               case "Operador":
-                if(this.first(tokens).type != "Operador" || this.first(tokens).token != "+"){
+                if(this.first(tokens).type != "Operador" && 
+                  this.first(tokens).type != "Palavra Reservada" 
+                  && this.first(tokens).type != "Identificador"){
+                  console.log("Entrou");
                   return false;
                 }
                 break;
@@ -60,7 +63,7 @@ module.exports = class Sintatico {
               if(current_token.token == "="){
                 return false;
               }
-              if(this.first(tokens).type != "Numero" || this.first(tokens).type != "Identificador"){
+              if(this.first(tokens).type != "Numero" && this.first(tokens).type != "Identificador"){
                 return false;
               }
               break;

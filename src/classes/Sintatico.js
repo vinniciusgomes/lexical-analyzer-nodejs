@@ -7,7 +7,6 @@ module.exports = class Sintatico {
     while (tokens.length > 0){
       var current_token = tokens.shift()
   
-      // Since number token does not do anything by it self, we only analyze syntax when we find a word.
       switch (current_token.type) {
         case 'Palavra Reservada' :
           if(tokens.length != 0){
@@ -19,26 +18,75 @@ module.exports = class Sintatico {
           break;
         case 'Identificador':
           if(tokens.length != 0){
-            
             switch(this.ultimo){
               case "Palavra Reservada":
+                if(this.first(tokens).type != "Operador" || this.first(tokens).token != "="){
+                  return false;
+                }
                 break;
               case "Identificador":
+                if(this.first(tokens).type != "Operador" || this.first(tokens).token != "="){
+                  return false;
+                }
                 break;
               case "Numero":
-                
+                if(this.first(tokens).type != "Operador" || this.first(tokens).token != "="){
+                  return false;
+                }
                 break;
               case "Operador":
-
+                if(this.first(tokens).type != "Operador" || this.first(tokens).token != "+"){
+                  return false;
+                }
                 break;
             }
           }
+          this.ultimo = "Identificador";
           break;
         case 'Operador':
-          console.log('Operador: ' + current_token.type);
+          switch(this.ultimo){
+            case "Palavra Reservada":
+              return false;
+              break;
+            case "Identificador":
+              if(this.first(tokens).type != "Identificador" && this.first(tokens).type != "Numero"){
+                return false;
+              }
+              break;
+            case "Operador":
+              return false;
+              break;
+            case "Numero":
+              if(current_token.token == "="){
+                return false;
+              }
+              if(this.first(tokens).type != "Numero" || this.first(tokens).type != "Identificador"){
+                return false;
+              }
+              break;
+          }
+          this.ultimo = "Operador";
           break;
         case 'Numero':
-          console.log('Numero: ' + current_token.type);
+          switch(this.ultimo){
+            case "Palavra Reservada":
+              return false;
+              break;
+            case "Identificador":
+              return false;
+              break;
+            case "Operador":
+              if(this.first(tokens).type != "Operador" || this.first(tokens).type != "identificador"){
+                if(this.first(tokens).type == "Operador" && this.first(tokens).token != "+"){
+                  return false;
+                }
+              }
+              break;
+            case "Numero":
+              return false;
+              break;
+          }
+          this.ultimo = "Numero";
           break;
       }
     }

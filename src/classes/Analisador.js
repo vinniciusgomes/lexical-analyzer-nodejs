@@ -84,8 +84,9 @@ module.exports = class Analisador {
     Arquivo.concatRetornoArquivo(this.operadoresEncontrados, "Operador");
     Arquivo.concatRetornoArquivo(this.numerosEncontrados, "Numero");
     Arquivo.WriteFile("./src/output/result.pdf", fs);
-    if(!Sintatico.analisar(this.tokens)){
-      Errors.error("Erro na gramática");
+    let sintatico = Sintatico.analisar(this.tokens);
+    if(!sintatico.erro){
+      Errors.error(sintatico.msg);
     }
   }
 

@@ -1,6 +1,6 @@
 module.exports = class Arquivo {
   constructor() {
-    this.saidaArquivo = "token; tipoToken; posicao (linha); posicao(coluna)\n\n";
+    this.saidaArquivo = "token; tipoToken\n\n";
   }
 
   concatRetornoArquivo(items, tipoToken) {

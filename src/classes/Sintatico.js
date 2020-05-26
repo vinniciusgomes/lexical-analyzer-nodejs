@@ -1,3 +1,6 @@
+var Arquivo = require("./Arquivos");
+Arquivo = new Arquivo();
+
 module.exports = class Sintatico {
   cosntructor(){
     this.ultimo = "";
@@ -11,9 +14,10 @@ module.exports = class Sintatico {
         case 'Palavra Reservada' :
           if(tokens.length != 0){
             if(this.first(tokens).type != 'Identificador'){
-              return false;
+              return {erro: false, msg: "Esperado um identificador"};
             }
           }
+          Arquivo.concatRetornoArquivo(current_token.token, "Palavra Reservada");
           this.ultimo = "Palavra Reservada";
           break;
         case 'Identificador':
@@ -21,79 +25,81 @@ module.exports = class Sintatico {
             switch(this.ultimo){
               case "Palavra Reservada":
                 if(this.first(tokens).type != "Operador" || this.first(tokens).token != "="){
-                  return false;
+                  return {erro: false, msg: "Esperado o operador '='"};
                 }
                 break;
               case "Identificador":
                 if(this.first(tokens).type != "Operador" || this.first(tokens).token != "="){
-                  return false;
+                  return {erro: false, msg: "Esperado o operador '='"};
                 }
                 break;
               case "Numero":
                 if(this.first(tokens).type != "Operador" || this.first(tokens).token != "="){
-                  return false;
+                  return {erro: false, msg: "Esperado o operador '='"};
                 }
                 break;
               case "Operador":
                 if(this.first(tokens).type != "Operador" && 
                   this.first(tokens).type != "Palavra Reservada" 
                   && this.first(tokens).type != "Identificador"){
-                  console.log("Entrou");
-                  return false;
+                    return {erro: false, msg: "Esperado um operador, palavra reservada ou identificador"};
                 }
                 break;
             }
           }
+          Arquivo.concatRetornoArquivo(current_token.token, "Identificador");
           this.ultimo = "Identificador";
           break;
         case 'Operador':
           switch(this.ultimo){
             case "Palavra Reservada":
-              return false;
+              return {erro: false, msg: "Esperado um identificador ou número"};
               break;
             case "Identificador":
               if(this.first(tokens).type != "Identificador" && this.first(tokens).type != "Numero"){
-                return false;
+                return {erro: false, msg: "Esperado um identificador ou número"};
               }
               break;
             case "Operador":
-              return false;
+              return {erro: false, msg: "Esperado um identificador ou número"};
               break;
             case "Numero":
               if(current_token.token == "="){
-                return false;
+                return {erro: false, msg: "Esperado o operador '+'"};
               }
               if(this.first(tokens).type != "Numero" && this.first(tokens).type != "Identificador"){
-                return false;
+                return {erro: false, msg: "Esperado um identificador ou número"};
               }
               break;
           }
+          Arquivo.concatRetornoArquivo(current_token.token, "Operador");
           this.ultimo = "Operador";
           break;
         case 'Numero':
           switch(this.ultimo){
             case "Palavra Reservada":
-              return false;
+              return {erro: false, msg: "Esperado um identificador"};
               break;
             case "Identificador":
-              return false;
+              return {erro: false, msg: "Esperado o operador '='"};
               break;
             case "Operador":
               if(this.first(tokens).type != "Operador" || this.first(tokens).type != "identificador"){
                 if(this.first(tokens).type == "Operador" && this.first(tokens).token != "+"){
-                  return false;
+                  return {erro: false, msg: "Esperado o operador '+'"};
                 }
               }
               break;
             case "Numero":
-              return false;
+              return {erro: false, msg: "Esperado um identificador"};
               break;
           }
+          Arquivo.concatRetornoArquivo(current_token.token, "Numero");
           this.ultimo = "Numero";
           break;
       }
     }
-    return true;
+    return {erro: true, msg: ""};
   }
 
   first(array) {
